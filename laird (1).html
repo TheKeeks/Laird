@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>l__ai__rd · Chocomount Beach</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════
+   DESIGN TOKENS
+   Warm parchment palette, serif-forward, no harsh blues
+   ═══════════════════════════════════════════════════════════ */
+:root {
+  --bg:       #f4f1ec;
+  --bg-card:  #ffffff;
+  --bg-alt:   #faf8f5;
+  --bg-hover: #f0ede7;
+  --border:   #e0dbd3;
+  --border-l: #eae6e0;
+
+  --ink:      #2c2825;
+  --ink2:     #5c554d;
+  --ink3:     #8a827a;
+  --ink4:     #b5afa8;
+
+  --green:    #3a7d56;
+  --green-bg: #e8f4ed;
+  --orange:   #b87a2e;
+  --orange-bg:#faf0e0;
+  --gray-c:   #a09890;
+  --red-m:    #a85a4a;
+
+  --teal:     #3a7d7d;
+  --blue:     #5a7fa0;
+  --blue-bg:  #eef3f8;
+
+  --serif:    'Libre Baskerville', 'Georgia', 'Times New Roman', serif;
+  --mono:     'DM Mono', 'JetBrains Mono', 'SF Mono', 'Menlo', monospace;
+
+  --card-r: 8px;
+  --gap: 10px;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--serif);
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  font-size: 14px;
+}
+
+/* ═══════ LAYOUT ═══════ */
+.wrap { max-width: 540px; margin: 0 auto; padding: 0 12px 48px; }
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--card-r);
+  padding: 14px;
+  margin-bottom: var(--gap);
+}
+.card-row { display: grid; gap: var(--gap); margin-bottom: var(--gap); }
+.card-row.c2 { grid-template-columns: 1fr 1fr; }
+.card-row.c3 { grid-template-columns: 1fr 1fr 1fr; }
+.card-row.c4 { grid-template-columns: 1fr 1fr; }
+@media (max-width: 440px) {
+  .card-row.c3 { grid-template-columns: 1fr 1fr; }
+  .card-row.c3 .card:last-child { grid-column: 1 / -1; }
+  .card-row.c4 { grid-template-columns: 1fr 1fr; }
+}
+.section-lbl {
+  font-family: var(--serif);
+  font-size: 10px; font-weight: 400;
+  text-transform: uppercase; letter-spacing: 1.2px;
+  color: var(--ink3); margin-bottom: 8px;
+}
+.src {
+  font-family: var(--mono); font-size: 8.5px; color: var(--ink4);
+  margin-top: 8px; line-height: 1.4;
+}
+.big { font-family: var(--mono); font-size: 26px; font-weight: 500; line-height: 1.15; }
+.med { font-family: var(--mono); font-size: 14px; font-weight: 400; }
+.sm  { font-size: 11px; color: var(--ink2); }
+.xs  { font-size: 10px; color: var(--ink3); }
+.teal { color: var(--teal); }
+.green { color: var(--green); }
+.orange { color: var(--orange); }
+.gray-c { color: var(--gray-c); }
+.err { color: var(--red-m); font-size: 11px; font-weight: 400; }
+.loading { color: var(--ink3); font-size: 12px; }
+
+/* ═══════ HEADER ═══════ */
+.hdr { padding: 18px 0 12px; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
+.hdr h1 { font-family: var(--mono); font-size: 18px; font-weight: 500; letter-spacing: 0.5px; color: var(--ink); }
+.hdr .sub { font-size: 11.5px; color: var(--ink2); margin-top: 1px; }
+.hdr .ts  { font-family: var(--mono); font-size: 9px; color: var(--ink4); margin-top: 3px; }
+
+/* ═══════ TIDE CHARTS ═══════ */
+.tide-c { width: 100%; height: 150px; display: block; }
+.tide-hl { display: flex; flex-wrap: wrap; gap: 3px 14px; margin-top: 6px; }
+.tide-hl span { font-family: var(--mono); font-size: 10px; color: var(--ink2); }
+.tide-hl .hi { color: var(--ink); font-weight: 500; }
+
+/* ═══════ WIND ═══════ */
+.w-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 5px; margin-top: 6px; }
+.w-cell { text-align: center; padding: 5px 2px; border-radius: 5px; background: var(--bg-alt); border: 1px solid var(--border-l); }
+.w-cell .wt { font-family: var(--mono); font-size: 9px; color: var(--ink3); }
+.w-cell .wa { font-size: 15px; display: block; line-height: 1.3; }
+.w-cell .ws { font-family: var(--mono); font-size: 11px; font-weight: 500; }
+
+/* ═══════ COMPASS ═══════ */
+.comp-w { display: flex; justify-content: center; padding: 6px 0; }
+.comp-c { display: block; }
+.comp-lg { margin-top: 8px; }
+.comp-lg .cli { font-family: var(--mono); font-size: 10.5px; display: flex; align-items: center; gap: 5px; margin-bottom: 4px; }
+.cli-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+
+/* ═══════ PIPELINE ═══════ */
+.pipe {
+  background: var(--bg-alt); border: 1px solid var(--border);
+  border-radius: 6px; padding: 16px; font-size: 12px; color: var(--ink2);
+  line-height: 1.6; margin: 6px 0;
+}
+.pipe strong { color: var(--ink); font-weight: 700; }
+.pipe code {
+  font-family: var(--mono); font-size: 10.5px;
+  background: #ece8e2; padding: 1px 4px; border-radius: 3px;
+}
+.pipe .step { margin-top: 8px; padding-left: 14px; }
+.pipe .step li { margin-bottom: 3px; }
+
+/* ═══════ EMBEDS / LINKS ═══════ */
+.embed-ph {
+  background: var(--bg-alt); border: 1px dashed var(--border);
+  border-radius: 6px; display: flex; align-items: center; justify-content: center;
+  min-height: 280px; color: var(--ink3); font-size: 12px; text-align: center; padding: 24px;
+}
+.embed-ph a { color: var(--blue); }
+.sl-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); }
+.sl-btn {
+  display: block; text-align: center; padding: 12px; background: var(--bg-alt);
+  border: 1px solid var(--border); border-radius: 6px; text-decoration: none;
+  color: var(--ink); font-family: var(--serif); font-size: 13px; transition: border-color .15s;
+}
+.sl-btn:hover { border-color: var(--blue); }
+.sl-btn small { display: block; color: var(--ink3); font-size: 9px; margin-top: 2px; font-family: var(--mono); }
+
+/* ═══════ FOOTER ═══════ */
+.ftr { text-align: center; padding: 16px 0 0; border-top: 1px solid var(--border); margin-top: 16px; }
+.ftr p { font-size: 9.5px; color: var(--ink4); font-family: var(--mono); }
+
+/* ═══════ WINDOW LEGEND (small inline key) ═══════ */
+.wkey { font-family: var(--mono); font-size: 9px; color: var(--ink3); margin-top: 8px; }
+.wkey .k { display: inline-block; width: 8px; height: 8px; border-radius: 2px; vertical-align: middle; margin: 0 2px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ═══════════════════════════════════════════════════════
+     HEADER
+     ═══════════════════════════════════════════════════════ -->
+<header class="hdr">
+  <h1>l__ai__rd</h1>
+  <div class="sub">Chocomount Beach · Fishers Island, NY</div>
+  <div class="ts" id="pg-ts">Loading data…</div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 1 — CURRENT CONDITIONS
+     Four cards: Swell | Water Temp | Wind | Light
+     ═══════════════════════════════════════════════════════ -->
+<div class="card-row c4">
+  <div class="card" id="c-swell">
+    <div class="section-lbl">Current Swell</div>
+    <div id="swell-out" class="loading">Loading…</div>
+    <div class="src" id="swell-src"></div>
+  </div>
+  <div class="card" id="c-temp">
+    <div class="section-lbl">Water Temp</div>
+    <div id="temp-out" class="loading">Loading…</div>
+    <div class="src" id="temp-src"></div>
+  </div>
+  <div class="card" id="c-wind">
+    <div class="section-lbl">Current Wind</div>
+    <div id="wind-out" class="loading">Loading…</div>
+    <div class="src" id="wind-src">NWS API · 41.276°N, 71.963°W</div>
+  </div>
+  <div class="card" id="c-light">
+    <div class="section-lbl">Daylight</div>
+    <div id="light-out" class="loading">Calculating…</div>
+    <div class="src">Astronomical · 41.276°N</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 2 — TIDES  (above swell info per request)
+     ═══════════════════════════════════════════════════════ -->
+<div class="card">
+  <div class="section-lbl">Tides — Silver Eel Pond, Fishers Island</div>
+  <canvas class="tide-c" id="tc1"></canvas>
+  <div class="tide-hl" id="th1"></div>
+  <div class="src" id="ts1">CO-OPS 8510719</div>
+</div>
+<div class="card">
+  <div class="section-lbl">Tides — Montauk</div>
+  <canvas class="tide-c" id="tc2"></canvas>
+  <div class="tide-hl" id="th2"></div>
+  <div class="src" id="ts2">CO-OPS 8510560</div>
+</div>
+
+<!-- Wind is now in Current Conditions above -->
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 4 — COMPASS ROSE
+     ═══════════════════════════════════════════════════════ -->
+<div class="card">
+  <div class="section-lbl">Swell Direction — Spectral Compass Rose</div>
+  <div class="comp-w"><canvas class="comp-c" id="compass" width="310" height="310"></canvas></div>
+  <div class="comp-lg" id="comp-lg"></div>
+  <div class="wkey">
+    Swell window: <span class="k" style="background:var(--green)"></span> 115°–158° in window
+    <span class="k" style="background:var(--orange)"></span> ±5° marginal
+    <span class="k" style="background:var(--gray-c)"></span> outside
+  </div>
+  <div class="src" id="comp-src">NDBC 44097 spectral</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 5 — SWELL FORECAST TIMELINE + TABLE
+     Requires GFS-Wave pipeline (server-side GRIB2)
+     ═══════════════════════════════════════════════════════ -->
+<div class="card">
+  <div class="section-lbl">10-Day Swell Forecast</div>
+  <div class="pipe">
+    <strong>⚙ GFS-Wave Pipeline Required</strong><br><br>
+    The swell forecast timeline and hourly table require server-side processing of NOAA GFS-Wave GRIB2 files,
+    which cannot be done in a browser. This is the same data source HopeWaves uses for its forecast.<br><br>
+    <strong>What this section will show once the pipeline is running:</strong>
+    <ol class="step">
+      <li>A <strong>horizontal timeline chart</strong> showing swell height over 10 days as a line graph with area fill color-coded by swell window
+        (<span style="color:var(--green)">■</span> green = in 115°–158° window,
+         <span style="color:var(--orange)">■</span> orange = ±5° marginal,
+         <span style="color:var(--gray-c)">■</span> gray = outside)</li>
+      <li>Wind arrows every 3 hours above the timeline, color-coded by speed</li>
+      <li>A <strong>"Worth a Check"</strong> row with ✓ marks where swell is green AND wind is light/offshore</li>
+      <li>Low tide diamond markers with time labels (e.g., "low @ 6:45 AM")</li>
+      <li>Nighttime shading between last light and first light</li>
+      <li>An <strong>hourly forecast table</strong> below the chart with: Time, Height, Period, Direction (color-coded), Wind, and an expandable 2nd Swell column</li>
+    </ol>
+    <br>
+    <strong>To set up the pipeline:</strong>
+    <ol class="step">
+      <li>Create <code>scripts/fetch_forecast.py</code> — downloads GFS-Wave GRIB2 from NOMADS, extracts point data at 41.003°N, 71.600°W</li>
+      <li>Create <code>.github/workflows/update-forecast.yml</code> — runs every 6 hours (<code>cron: '30 3,9,15,21 * * *'</code>)</li>
+      <li>Pipeline writes <code>data/forecast.json</code> with hourly height, period, direction, and secondary swell components</li>
+      <li>This page reads <code>data/forecast.json</code> and renders the timeline + table</li>
+    </ol>
+    <br>
+    See the <strong>l__ai__rd Agent Spec</strong> for the complete pipeline code, NOMADS URL pattern, and xarray/cfgrib extraction script.
+  </div>
+  <div class="wkey" style="margin-top:10px">
+    Swell window color key:
+    <span class="k" style="background:var(--green)"></span> 115°–158° in window
+    <span class="k" style="background:var(--orange)"></span> ±5° marginal
+    <span class="k" style="background:var(--gray-c)"></span> outside
+    · Direction colors apply to primary swell height text in the table
+  </div>
+  <div class="src">GFS-Wave atlocn.0p16 @ 41.003°N, 71.600°W · Wind: NWS API @ Chocomount</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 6 — TIDAL CURRENTS (DeepZoom)
+     ═══════════════════════════════════════════════════════ -->
+<div class="card">
+  <div class="section-lbl">Tidal Currents</div>
+  <div class="embed-ph">
+    <div>
+      <strong style="color:var(--ink)">DeepZoom — Manual Setup Required</strong><br><br>
+      DeepZoom does not offer a public API for programmatic trip creation.<br>
+      Each trip ID must be created manually through their website.<br><br>
+      <strong>Setup (one-time, takes ~2 minutes):</strong><br>
+      1. Open <a href="https://www.deepzoom.com" target="_blank">deepzoom.com</a><br>
+      2. Navigate to Fishers Island area (41.17°N, 71.82°W)<br>
+      3. Enable current arrows (yellow layer)<br>
+      4. Save as a trip — copy the trip ID from the URL<br>
+      5. In <code>index.html</code>, replace the placeholder below:<br><br>
+      <code style="font-size:10px;background:#ece8e2;padding:4px 8px;border-radius:4px;display:inline-block">
+        src="https://www.deepzoom.com/trip/<strong>YOUR_TRIP_ID</strong>"
+      </code>
+    </div>
+  </div>
+  <div class="src">DeepZoom.com · Fishers Is. / Block Is. / Montauk / The Race</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 7 — WIND MAP (Windy embed — real)
+     ═══════════════════════════════════════════════════════ -->
+<div class="card">
+  <div class="section-lbl">Wind Map</div>
+  <iframe title="Windy.com Wind Map" width="100%" height="340" frameborder="0"
+    style="border:none;border-radius:6px"
+    src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricWind=mph&metricTemp=%C2%B0F&zoom=9&overlay=wind&product=ecmwf&level=surface&lat=41.20&lon=-71.85">
+  </iframe>
+  <div class="src">Windy.com · ECMWF model · Center: 41.20°N, 71.85°W</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 8 — SURFLINE LINKS
+     ═══════════════════════════════════════════════════════ -->
+<div class="card">
+  <div class="section-lbl">Surfline Reports</div>
+  <div class="sl-row">
+    <a href="https://www.surfline.com/surf-report/north-bar/640a446199dd442b2f04627f" target="_blank" class="sl-btn">
+      North Bar <small>→ surfline.com</small>
+    </a>
+    <a href="https://www.surfline.com/surf-report/terrace/5842041f4e65fad6a77089f6" target="_blank" class="sl-btn">
+      Terrace <small>→ surfline.com</small>
+    </a>
+  </div>
+</div>
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer class="ftr">
+  <p>Data: NDBC · CO-OPS · NWS · NOAA · Windy · DeepZoom</p>
+  <p>Chocomount Beach, Fishers Island, NY · 41.276°N, 71.963°W</p>
+</footer>
+
+</div><!-- /wrap -->
+
+<!-- ═══════════════════════════════════════════════════════════
+     JAVASCRIPT — All data fetching + rendering
+     ═══════════════════════════════════════════════════════════ -->
+<script>
+(function () {
+'use strict';
+
+/* ──────────────────────────────
+   CONFIGURATION
+   ────────────────────────────── */
+const C = {
+  lat: 41.275693, lon: -71.963310,
+  buoy: '44097',
+  tempSt: '8510560',  // Montauk CO-OPS
+  tide1: '8510719',   // Silver Eel Pond
+  tide2: '8510560',   // Montauk
+  winE: 115, winW: 158, // swell window bearings
+  buf: 5,             // orange zone ± degrees
+};
+
+/* ──────────────────────────────
+   UTILITY
+   ────────────────────────────── */
+const D2C_TBL = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+function d2c(d) { return D2C_TBL[Math.round(((d % 360) + 360) % 360 / 22.5) % 16]; }
+function c2f(c) { return (c * 9 / 5 + 32).toFixed(1); }
+function m2ft(m) { return (m * 3.28084).toFixed(1); }
+function fmtT(s) {
+  const d = new Date(typeof s === 'string' ? s.replace(' ', 'T') : s);
+  if (isNaN(d)) return '—';
+  let h = d.getHours(), m = d.getMinutes(), ap = h >= 12 ? 'PM' : 'AM';
+  if (h > 12) h -= 12; if (h === 0) h = 12;
+  return h + ':' + String(m).padStart(2, '0') + ' ' + ap;
+}
+function ago(s) {
+  const ms = Date.now() - new Date(typeof s === 'string' ? s.replace(' ', 'T') : s).getTime();
+  const m = ms / 60000;
+  if (m < 1.5) return 'just now';
+  if (m < 60) return Math.round(m) + ' min ago';
+  if (m < 1440) return Math.round(m / 60) + ' hr ago';
+  return Math.round(m / 1440) + 'd ago';
+}
+function dirCol(deg) {
+  if (isNaN(deg)) return 'var(--gray-c)';
+  if (deg >= C.winE && deg <= C.winW) return 'var(--green)';
+  if ((deg >= C.winE - C.buf && deg < C.winE) || (deg > C.winW && deg <= C.winW + C.buf)) return 'var(--orange)';
+  return 'var(--gray-c)';
+}
+function dirCls(deg) {
+  if (isNaN(deg)) return 'gray-c';
+  if (deg >= C.winE && deg <= C.winW) return 'green';
+  if ((deg >= C.winE - C.buf && deg < C.winE) || (deg > C.winW && deg <= C.winW + C.buf)) return 'orange';
+  return 'gray-c';
+}
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+/* ──────────────────────────────
+   SOLAR CALCULATIONS
+   Civil twilight (sun 6° below horizon)
+   ────────────────────────────── */
+function calcSun(lat, lon, date) {
+  const R = Math.PI / 180;
+  const doy = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / 864e5);
+  const decl = -23.45 * Math.cos(R * 360 / 365 * (doy + 10));
+  const B = (360 / 365) * (doy - 81) * R;
+  const eot = 9.87 * Math.sin(2 * B) - 7.53 * Math.cos(B) - 1.5 * Math.sin(B);
+  const noon = 720 - 4 * lon - eot; // minutes UTC
+  const off = -date.getTimezoneOffset();
+
+  function ha(zenith) {
+    const cos_ha = (Math.cos(zenith * R) - Math.sin(lat * R) * Math.sin(decl * R))
+                 / (Math.cos(lat * R) * Math.cos(decl * R));
+    if (Math.abs(cos_ha) > 1) return null;
+    return Math.acos(cos_ha) / R;
+  }
+  const ha_sun = ha(90.833), ha_civil = ha(96);
+  if (!ha_sun || !ha_civil) return null;
+
+  const fmt = (mins) => {
+    const h = Math.floor(mins / 60), m = Math.round(mins % 60);
+    const ap = h >= 12 ? 'PM' : 'AM';
+    return (h > 12 ? h - 12 : (h || 12)) + ':' + String(m).padStart(2, '0') + ' ' + ap;
+  };
+  const fl = noon - ha_civil * 4 + off;
+  const sr = noon - ha_sun * 4 + off;
+  const ss = noon + ha_sun * 4 + off;
+  const ll = noon + ha_civil * 4 + off;
+  return {
+    firstLight: fmt(fl), sunrise: fmt(sr), sunset: fmt(ss), lastLight: fmt(ll),
+    flMin: fl, llMin: ll, srMin: sr, ssMin: ss,
+  };
+}
+
+/* ──────────────────────────────
+   DATA FETCHING
+   All real NOAA / NWS endpoints
+   ────────────────────────────── */
+
+// NDBC 44097 standard meteorological
+async function fetchBuoy() {
+  const r = await fetch('https://www.ndbc.noaa.gov/data/realtime2/' + C.buoy + '.txt');
+  const t = await r.text(), lines = t.trim().split('\n');
+  const d = lines[2].trim().split(/\s+/);
+  return {
+    ts: d[0]+'-'+d[1]+'-'+d[2]+'T'+d[3]+':'+d[4]+':00Z',
+    wvht: +d[8], dpd: +d[9], mwd: +d[11], wtmp: +d[14],
+    wdir: +d[5], wspd: +d[6],
+  };
+}
+
+// NDBC 44097 spectral wave summary (.spec)
+// Gives: sig height, primary swell (ht/per/dir), wind waves (ht/per/dir)
+async function fetchSpec() {
+  const r = await fetch('https://www.ndbc.noaa.gov/data/realtime2/' + C.buoy + '.spec');
+  const t = await r.text(), lines = t.trim().split('\n');
+  const d = lines[2].trim().split(/\s+/);
+  return {
+    ts: d[0]+'-'+d[1]+'-'+d[2]+'T'+d[3]+':'+d[4]+':00Z',
+    sigHt: +d[5], swHt: +d[6], swPer: +d[7], swDir: +d[8],
+    wwHt: +d[9], wwPer: +d[10], wwDir: +d[11],
+  };
+}
+
+/*
+  NDBC 44097 spectral directional data (5 files)
+  Used for compass rose rendering — following surfpy/buoyspectra.py algorithm:
+  - data_spec: E(f) energy density per frequency bin
+  - swdir:  alpha1(f) — mean wave direction
+  - swdir2: alpha2(f) — principal wave direction
+  - swr1:   r1(f) — normalized polar coordinate (first moment)
+  - swr2:   r2(f) — normalized polar coordinate (second moment)
+
+  From surfpy buoystation.py line ~218:
+    The data_spec file has (freq) headers and energy values interlaced.
+    The swdir file has (angle, freq) pairs. angle is the mean direction.
+    surfpy uses: spectra.frequency = freq values, spectra.angle = angle values,
+    spectra.energy = energy values. Each index i corresponds to one frequency bin.
+
+  The compass rose uses the Longuet-Higgins directional distribution:
+    D(f,θ) = (1/2π)[1 + 2·a1·cos(θ) + 2·b1·sin(θ) + 2·a2·cos(2θ) + 2·b2·sin(2θ)]
+  where a1 = r1·cos(α1), b1 = r1·sin(α1), a2 = r2·cos(α2), b2 = r2·sin(α2)
+
+  Then total directional energy: E(θ) = Σ_f [ E(f) × D(f,θ) × Δf ]
+
+  Swell component separation (surfpy buoyspectra.py line ~67):
+    1. Find peaks in E(f) using peakdetect
+    2. Integrate zero_moment between troughs for each peak
+    3. wave_height = 4.0 * sqrt(zero_moment)
+    4. period = 1/frequency[peak_index], direction = angle[peak_index]
+*/
+async function fetchSpectral() {
+  const base = 'https://www.ndbc.noaa.gov/data/realtime2/' + C.buoy;
+  const [eR, a1R, a2R, r1R, r2R] = await Promise.all([
+    fetch(base + '.data_spec').then(r => r.text()),
+    fetch(base + '.swdir').then(r => r.text()),
+    fetch(base + '.swdir2').then(r => r.text()),
+    fetch(base + '.swr1').then(r => r.text()),
+    fetch(base + '.swr2').then(r => r.text()),
+  ]);
+
+  // Parse data_spec: header has (freq) values, data line has date + (sep_freq) + energy values
+  function parseDataSpec(txt) {
+    const lines = txt.trim().split('\n');
+    const hdr = lines[0];
+    const freqs = [];
+    const re = /\(([0-9.]+)\)/g; let m;
+    while ((m = re.exec(hdr)) !== null) freqs.push(+m[1]);
+    const vals = lines[2].trim().split(/\s+/);
+    // First 5 = date fields, index 5 = separation_frequency, then energy values
+    const sepFreq = +vals[5];
+    const energy = [];
+    for (let i = 6; i < vals.length && energy.length < freqs.length; i++) {
+      energy.push(+vals[i]);
+    }
+    return { freqs, energy, sepFreq };
+  }
+
+  // Parse swdir: header has (freq), data has date + angle values
+  // But actually swdir format is: date, then (angle) values at each freq
+  function parseDirFile(txt) {
+    const lines = txt.trim().split('\n');
+    const hdr = lines[0];
+    const freqs = [];
+    const re = /\(([0-9.]+)\)/g; let m;
+    while ((m = re.exec(hdr)) !== null) freqs.push(+m[1]);
+    const vals = lines[2].trim().split(/\s+/);
+    const data = [];
+    for (let i = 5; i < vals.length && data.length < freqs.length; i++) {
+      data.push(+vals[i]);
+    }
+    return data;
+  }
+
+  const spec = parseDataSpec(eR);
+  const alpha1 = parseDirFile(a1R);
+  const alpha2 = parseDirFile(a2R);
+  const r1 = parseDirFile(r1R);
+  const r2 = parseDirFile(r2R);
+
+  return {
+    freqs: spec.freqs, energy: spec.energy, sepFreq: spec.sepFreq,
+    alpha1, alpha2, r1, r2,
+  };
+}
+
+// CO-OPS water temperature — current
+async function fetchTemp() {
+  const r = await fetch('https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=latest&station='+C.tempSt+'&product=water_temperature&units=english&time_zone=lst_ldt&application=laird&format=json');
+  const j = await r.json();
+  return (j.data && j.data.length) ? { v: +j.data[0].v, t: j.data[0].t } : null;
+}
+
+// CO-OPS water temperature — same date last year
+async function fetchTempHist() {
+  const now = new Date(), ly = new Date(now); ly.setFullYear(now.getFullYear() - 1);
+  const ds = ly.toISOString().slice(0,10).replace(/-/g, '');
+  try {
+    const r = await fetch('https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date='+ds+'&end_date='+ds+'&station='+C.tempSt+'&product=water_temperature&units=english&time_zone=lst_ldt&interval=h&application=laird&format=json');
+    const j = await r.json();
+    if (j.data && j.data.length) {
+      const vals = j.data.map(d => +d.v).filter(v => !isNaN(v));
+      return vals.length ? (vals.reduce((a,b) => a+b, 0) / vals.length).toFixed(1) : null;
+    }
+  } catch(e) {}
+  return null;
+}
+
+// CO-OPS tide predictions
+async function fetchTide(st) {
+  const [pR, hR] = await Promise.all([
+    fetch('https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=today&range=72&station='+st+'&product=predictions&datum=MLLW&units=english&time_zone=lst_ldt&interval=6&application=laird&format=json'),
+    fetch('https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=today&range=72&station='+st+'&product=predictions&datum=MLLW&units=english&time_zone=lst_ldt&interval=hilo&application=laird&format=json'),
+  ]);
+  const p = await pR.json(), h = await hR.json();
+  return { preds: p.predictions || [], hilos: h.predictions || [] };
+}
+
+// NWS hourly wind forecast
+async function fetchWind() {
+  const mR = await fetch('https://api.weather.gov/points/' + C.lat + ',' + C.lon, {
+    headers: { 'User-Agent': 'laird-surf-forecast (contact: github.com/laird)' }
+  });
+  const meta = await mR.json();
+  const fR = await fetch(meta.properties.forecastHourly, {
+    headers: { 'User-Agent': 'laird-surf-forecast' }
+  });
+  const f = await fR.json();
+  return f.properties.periods || [];
+}
+
+/* ──────────────────────────────
+   COMPASS ROSE RENDERER
+   Following surfpy/buoyspectra.py algorithm
+   ────────────────────────────── */
+function renderCompass(spectral, specSummary) {
+  const canvas = document.getElementById('compass');
+  const W = 310, H = 310;
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = W * dpr; canvas.height = H * dpr;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  const cx = W / 2, cy = H / 2, R = W / 2 - 38;
+  const RAD = Math.PI / 180;
+
+  // ── Step 1: Compute directional energy distribution ──
+  // Longuet-Higgins Fourier series: D(f,θ) = (1/2π)[1 + 2a1cos(θ) + 2b1sin(θ) + 2a2cos(2θ) + 2b2sin(2θ)]
+  // Then E(θ) = Σ_f [E(f) · D(f,θ) · Δf]
+  const nBins = 72; // 5° resolution
+  const dirE = new Float64Array(nBins);
+
+  if (spectral && spectral.freqs.length > 0) {
+    const N = Math.min(spectral.freqs.length, spectral.energy.length,
+                       spectral.alpha1.length, spectral.r1.length);
+    for (let i = 0; i < N; i++) {
+      const E = spectral.energy[i];
+      if (!E || E <= 0 || isNaN(E)) continue;
+
+      const a1_deg = spectral.alpha1[i] || 0;
+      const a2_deg = spectral.alpha2[i] || 0;
+      const r1_v  = spectral.r1[i] || 0;
+      const r2_v  = spectral.r2[i] || 0;
+
+      // Fourier coefficients from directional moments
+      const a1 = r1_v * Math.cos(a1_deg * RAD);
+      const b1 = r1_v * Math.sin(a1_deg * RAD);
+      const a2 = r2_v * Math.cos(2 * a2_deg * RAD);
+      const b2 = r2_v * Math.sin(2 * a2_deg * RAD);
+
+      // Frequency bandwidth
+      let bw;
+      if (i === 0) bw = Math.abs(spectral.freqs[1] - spectral.freqs[0]);
+      else bw = Math.abs(spectral.freqs[i] - spectral.freqs[i - 1]);
+      if (bw <= 0) bw = 0.005;
+
+      for (let d = 0; d < nBins; d++) {
+        const theta = d * 5 * RAD;
+        let D = (1 / (2 * Math.PI)) * (1
+          + 2 * a1 * Math.cos(theta)
+          + 2 * b1 * Math.sin(theta)
+          + 2 * a2 * Math.cos(2 * theta)
+          + 2 * b2 * Math.sin(2 * theta));
+        if (D < 0) D = 0;
+        dirE[d] += E * D * bw;
+      }
+    }
+  }
+  const maxE = Math.max(...dirE, 0.0001);
+
+  // ── Step 2: Extract swell components (surfpy peakdetect algorithm) ──
+  // Find peaks in the 1D energy spectrum, integrate between troughs
+  let components = [];
+  if (spectral && spectral.freqs.length > 0) {
+    // Simple peakdetect: find local maxima in energy spectrum
+    const E = spectral.energy;
+    const delta = 0.05;
+    const peaks = [], troughs = [];
+    let mn = Infinity, mx = -Infinity, mnI = 0, mxI = 0;
+    let lookForMax = true;
+
+    for (let i = 0; i < E.length; i++) {
+      if (E[i] > mx) { mx = E[i]; mxI = i; }
+      if (E[i] < mn) { mn = E[i]; mnI = i; }
+      if (lookForMax) {
+        if (E[i] < mx - delta) {
+          peaks.push({ idx: mxI, val: mx });
+          mn = E[i]; mnI = i;
+          lookForMax = false;
+        }
+      } else {
+        if (E[i] > mn + delta) {
+          troughs.push({ idx: mnI, val: mn });
+          mx = E[i]; mxI = i;
+          lookForMax = true;
+        }
+      }
+    }
+
+    // For each peak, integrate zero_moment between surrounding troughs
+    let prev = 0;
+    for (let p = 0; p < peaks.length; p++) {
+      let next = E.length;
+      if (p < troughs.length) next = troughs[p].idx;
+
+      let m0 = 0;
+      for (let j = prev; j < next && j < E.length; j++) {
+        let bw;
+        if (j === 0) bw = Math.abs(spectral.freqs[1] - spectral.freqs[0]);
+        else bw = Math.abs(spectral.freqs[j] - spectral.freqs[j - 1]);
+        if (bw <= 0) bw = 0.005;
+        m0 += E[j] * bw;
+      }
+      const ht = 4.0 * Math.sqrt(m0);  // Hs = 4√m₀
+      const per = 1.0 / spectral.freqs[peaks[p].idx];
+      const dir = spectral.alpha1[peaks[p].idx] || 0;
+
+      if (ht > 0.1) { // Only show if > ~0.3 ft
+        components.push({
+          ht, per, dir,
+          energy: peaks[p].val,
+          label: ht > 0.3 ? (m2ft(ht) + 'ft ' + d2c(dir) + ' @ ' + per.toFixed(0) + 's') : '',
+        });
+      }
+      prev = next;
+    }
+    components.sort((a, b) => b.energy - a.energy);
+  }
+
+  // ── Step 3: Draw ──
+
+  // Concentric circles with energy labels
+  ctx.strokeStyle = '#e0dbd3'; ctx.lineWidth = 0.5;
+  for (let r = 1; r <= 3; r++) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, R * r / 3, 0, 2 * Math.PI);
+    ctx.stroke();
+    // Energy scale label
+    ctx.font = '8px "DM Mono", monospace';
+    ctx.fillStyle = '#b5afa8';
+    ctx.textAlign = 'left';
+    ctx.fillText((maxE * r / 3).toFixed(2), cx + 3, cy - R * r / 3 + 10);
+  }
+  ctx.font = '7px "DM Mono", monospace';
+  ctx.fillStyle = '#b5afa8';
+  ctx.fillText('m²/Hz', cx + 3, cy - R - 2);
+
+  // Cardinal dashed lines
+  ctx.strokeStyle = '#eae6e0'; ctx.lineWidth = 0.5;
+  ctx.setLineDash([2, 3]);
+  for (let a = 0; a < 360; a += 45) {
+    const rad = (a - 90) * RAD;
+    ctx.beginPath(); ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + R * Math.cos(rad), cy + R * Math.sin(rad));
+    ctx.stroke();
+  }
+  ctx.setLineDash([]);
+
+  // Directional energy fill (polar area)
+  if (maxE > 0.0001) {
+    ctx.beginPath();
+    for (let d = 0; d <= nBins; d++) {
+      const idx = d % nBins;
+      const compassDeg = idx * 5;
+      const canvasRad = (compassDeg - 90) * RAD;
+      const r = (dirE[idx] / maxE) * R;
+      const x = cx + r * Math.cos(canvasRad), y = cy + r * Math.sin(canvasRad);
+      if (d === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(90, 127, 160, 0.18)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(90, 127, 160, 0.55)';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+  }
+
+  // Swell window lines (115° and 158°)
+  function drawWinLine(deg, label) {
+    const rad = (deg - 90) * RAD;
+    ctx.beginPath(); ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + (R + 6) * Math.cos(rad), cy + (R + 6) * Math.sin(rad));
+    ctx.strokeStyle = '#bf7a2e'; ctx.lineWidth = 1.2;
+    ctx.setLineDash([4, 3]); ctx.stroke(); ctx.setLineDash([]);
+    const lx = cx + (R + 18) * Math.cos(rad), ly = cy + (R + 18) * Math.sin(rad);
+    ctx.font = '8px "Libre Baskerville", serif';
+    ctx.fillStyle = '#a09890'; ctx.textAlign = 'center';
+    ctx.fillText(label, lx, ly + 3);
+  }
+  drawWinLine(C.winE, 'Block Is.');
+  drawWinLine(C.winW, 'Montauk');
+
+  // Cardinal labels
+  const lbls = [['N',0],['NE',45],['E',90],['SE',135],['S',180],['SW',225],['W',270],['NW',315]];
+  ctx.font = '9px "Libre Baskerville", serif';
+  ctx.fillStyle = '#5c554d'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  for (const [l, deg] of lbls) {
+    const rad = (deg - 90) * RAD;
+    ctx.fillText(l, cx + (R + 18) * Math.cos(rad), cy + (R + 18) * Math.sin(rad));
+  }
+
+  // Component markers + labels
+  const colors = ['#3a7d56', '#b87a2e', '#5c554d', '#a85a4a'];
+  const names = ['Primary Swell', 'Secondary', 'Tertiary', 'Wind Waves'];
+  const legEl = document.getElementById('comp-lg');
+  legEl.innerHTML = '';
+
+  // Also show .spec wind wave component if available
+  if (specSummary && !isNaN(specSummary.wwHt) && specSummary.wwHt > 0) {
+    // Check if already captured by peak detection
+    const hasWW = components.some(c => Math.abs(c.per - specSummary.wwPer) < 1);
+    if (!hasWW) {
+      components.push({
+        ht: specSummary.wwHt, per: specSummary.wwPer, dir: specSummary.wwDir,
+        energy: 0, label: m2ft(specSummary.wwHt) + 'ft ' + d2c(specSummary.wwDir) + ' @ ' + specSummary.wwPer.toFixed(0) + 's',
+        isWW: true,
+      });
+    }
+  }
+
+  components.slice(0, 4).forEach((comp, i) => {
+    const deg = comp.dir;
+    const canvasRad = (deg - 90) * RAD;
+    // Place marker at the energy level in that direction
+    const dirIdx = Math.round(deg / 5) % nBins;
+    const eR = maxE > 0.0001 ? (dirE[dirIdx] / maxE) * R : R * 0.4;
+    const r = Math.max(eR, 20);  // minimum distance from center
+    const x = cx + r * Math.cos(canvasRad), y = cy + r * Math.sin(canvasRad);
+
+    // Dot
+    ctx.beginPath(); ctx.arc(x, y, 4.5, 0, 2 * Math.PI);
+    ctx.fillStyle = colors[i]; ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke();
+
+    // Label near dot
+    if (comp.label) {
+      const lx = cx + (r + 16) * Math.cos(canvasRad);
+      const ly = cy + (r + 16) * Math.sin(canvasRad);
+      ctx.font = '500 8.5px "DM Mono", monospace';
+      ctx.fillStyle = colors[i]; ctx.textAlign = 'center';
+      ctx.fillText(comp.label, lx, ly);
+    }
+
+    // Legend entry
+    const nm = comp.isWW ? 'Wind Waves' : names[i];
+    legEl.innerHTML += '<div class="cli"><span class="cli-dot" style="background:'+colors[i]+'"></span>' +
+      '<span>'+nm+': '+m2ft(comp.ht)+' ft '+d2c(deg)+' ('+Math.round(deg)+'°) @ '+comp.per.toFixed(0)+'s</span></div>';
+  });
+
+  if (components.length === 0 && specSummary) {
+    // Fallback: show .spec summary data as the single component
+    legEl.innerHTML = '<div class="cli"><span class="cli-dot" style="background:#3a7d56"></span>' +
+      '<span>Primary: '+m2ft(specSummary.swHt)+' ft '+d2c(specSummary.swDir)+' ('+Math.round(specSummary.swDir)+'°) @ '+specSummary.swPer.toFixed(0)+'s</span></div>';
+  }
+}
+
+/* ──────────────────────────────
+   TIDE CHART RENDERER
+   ────────────────────────────── */
+function renderTide(cid, hlid, data) {
+  const canvas = document.getElementById(cid);
+  const parent = canvas.parentElement;
+  const W = parent.getBoundingClientRect().width - 2;
+  const H = 150;
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = W * dpr; canvas.height = H * dpr;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  if (!data || !data.preds.length) {
+    ctx.font = 'italic 12px "Libre Baskerville", serif';
+    ctx.fillStyle = '#a09890';
+    ctx.fillText('Tide data unavailable', 16, H / 2);
+    return;
+  }
+
+  const pad = { t: 18, b: 22, l: 8, r: 8 };
+  const pW = W - pad.l - pad.r, pH = H - pad.t - pad.b;
+  const pts = data.preds.map(p => ({ t: new Date(p.t.replace(' ', 'T')).getTime(), v: +p.v }));
+  const tMin = pts[0].t, tMax = pts[pts.length - 1].t;
+  const vMin = Math.min(...pts.map(p => p.v)) - 0.3;
+  const vMax = Math.max(...pts.map(p => p.v)) + 0.3;
+  const xS = t => pad.l + ((t - tMin) / (tMax - tMin)) * pW;
+  const yS = v => pad.t + pH - ((v - vMin) / (vMax - vMin)) * pH;
+
+  // Nighttime shading
+  const sun = calcSun(C.lat, C.lon, new Date());
+  if (sun) {
+    ctx.fillStyle = 'rgba(0,0,0,0.025)';
+    for (let day = 0; day < 3; day++) {
+      const ds = new Date(pts[0].t); ds.setDate(ds.getDate() + day); ds.setHours(0,0,0,0);
+      const fl = ds.getTime() + sun.flMin * 60000;
+      const ll = ds.getTime() + sun.llMin * 60000;
+      const de = ds.getTime() + 24 * 3600000;
+      // Before first light
+      if (ds.getTime() >= tMin || fl <= tMax) {
+        ctx.fillRect(Math.max(xS(ds.getTime()), pad.l), pad.t,
+          xS(Math.min(fl, tMax)) - Math.max(xS(ds.getTime()), pad.l), pH);
+      }
+      // After last light
+      if (ll >= tMin && ll <= tMax) {
+        ctx.fillRect(xS(ll), pad.t,
+          Math.min(xS(de), pad.l + pW) - xS(ll), pH);
+      }
+    }
+  }
+
+  // Zero line (MLLW)
+  ctx.strokeStyle = '#e0dbd3'; ctx.lineWidth = 0.5;
+  ctx.setLineDash([3, 3]);
+  ctx.beginPath(); ctx.moveTo(pad.l, yS(0)); ctx.lineTo(W - pad.r, yS(0)); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Tide curve + gradient fill
+  ctx.beginPath();
+  pts.forEach((p, i) => {
+    const x = xS(p.t), y = yS(p.v);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  });
+  const last = pts[pts.length - 1];
+  ctx.lineTo(xS(last.t), yS(vMin));
+  ctx.lineTo(xS(pts[0].t), yS(vMin));
+  ctx.closePath();
+  const grad = ctx.createLinearGradient(0, pad.t, 0, pad.t + pH);
+  grad.addColorStop(0, 'rgba(90, 127, 160, 0.12)');
+  grad.addColorStop(1, 'rgba(90, 127, 160, 0.01)');
+  ctx.fillStyle = grad; ctx.fill();
+
+  // Curve stroke
+  ctx.beginPath();
+  pts.forEach((p, i) => {
+    const x = xS(p.t), y = yS(p.v);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  });
+  ctx.strokeStyle = '#5a7fa0'; ctx.lineWidth = 1.5; ctx.stroke();
+
+  // NOW marker
+  const now = Date.now();
+  if (now >= tMin && now <= tMax) {
+    const nx = xS(now);
+    ctx.strokeStyle = '#b87a2e'; ctx.lineWidth = 0.8;
+    ctx.setLineDash([2, 2]);
+    ctx.beginPath(); ctx.moveTo(nx, pad.t); ctx.lineTo(nx, pad.t + pH); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.font = '7px "DM Mono", monospace'; ctx.fillStyle = '#b87a2e'; ctx.textAlign = 'center';
+    ctx.fillText('NOW', nx, pad.t - 4);
+  }
+
+  // Hi/Lo markers and annotations
+  const hlEl = document.getElementById(hlid);
+  hlEl.innerHTML = '';
+  data.hilos.forEach(hl => {
+    const t = new Date(hl.t.replace(' ', 'T'));
+    const v = +hl.v, x = xS(t.getTime()), y = yS(v);
+    const isH = hl.type === 'H', isL = hl.type === 'L';
+    const dayN = DAYS[t.getDay()];
+
+    if (isL) {
+      // Diamond marker for lows
+      ctx.fillStyle = '#5a7fa0';
+      ctx.beginPath();
+      ctx.moveTo(x, y - 4); ctx.lineTo(x + 4, y); ctx.lineTo(x, y + 4); ctx.lineTo(x - 4, y); ctx.closePath();
+      ctx.fill();
+      // Annotation: "Wed Low 7:45 AM"
+      ctx.font = '7.5px "DM Mono", monospace'; ctx.fillStyle = '#5c554d'; ctx.textAlign = 'center';
+      ctx.fillText(dayN + ' Low ' + fmtT(t), x, y + 14);
+    } else {
+      ctx.beginPath(); ctx.arc(x, y, 2.5, 0, 2 * Math.PI);
+      ctx.fillStyle = '#5a7fa0'; ctx.fill();
+      ctx.font = '7.5px "DM Mono", monospace'; ctx.fillStyle = '#2c2825'; ctx.textAlign = 'center';
+      ctx.fillText(v.toFixed(1) + "'", x, y - 7);
+    }
+
+    hlEl.innerHTML += '<span class="' + (isH ? 'hi' : '') + '">' +
+      hl.type + ' ' + fmtT(t) + ' ' + v.toFixed(1) + "'</span>";
+  });
+
+  // Day labels on x-axis
+  ctx.font = '8px "DM Mono", monospace'; ctx.fillStyle = '#a09890'; ctx.textAlign = 'center';
+  for (let i = 0; i < 3; i++) {
+    const d = new Date(pts[0].t); d.setDate(d.getDate() + i); d.setHours(12, 0, 0, 0);
+    if (d.getTime() >= tMin && d.getTime() <= tMax) {
+      ctx.fillText(DAYS[d.getDay()], xS(d.getTime()), H - 4);
+    }
+  }
+}
+
+/* ──────────────────────────────
+   WIND RENDERER — current wind only (single reading)
+   ────────────────────────────── */
+function renderWind(periods) {
+  const el = document.getElementById('wind-out');
+  if (!periods || !periods.length) {
+    el.innerHTML = '<span class="err">Wind data unavailable</span>';
+    return;
+  }
+  // Show the current (first) period only
+  const p = periods[0];
+  const spd = parseInt(p.windSpeed) || 0;
+  let col = 'var(--ink)';
+  if (spd >= 20) col = 'var(--red-m)';
+  else if (spd >= 15) col = 'var(--orange)';
+  else if (spd <= 7) col = 'var(--green)';
+
+  const dirMap = {N:0,NNE:22,NE:45,ENE:67,E:90,ESE:112,SE:135,SSE:157,S:180,SSW:202,SW:225,WSW:247,W:270,WNW:292,NW:315,NNW:337};
+  const deg = dirMap[p.windDirection] || 0;
+
+  el.innerHTML =
+    '<div style="display:flex;align-items:center;gap:8px">' +
+      '<div style="font-size:22px;transform:rotate(' + deg + 'deg);color:' + col + ';line-height:1">↓</div>' +
+      '<div>' +
+        '<div class="big" style="font-size:22px;color:' + col + '">' + spd + ' <span style="font-size:12px;font-weight:400">mph</span></div>' +
+        '<div class="sm">' + p.windDirection + '</div>' +
+      '</div>' +
+    '</div>';
+
+  const srcEl = document.getElementById('wind-src');
+  srcEl.textContent = 'NWS API · Updated: ' + ago(p.startTime);
+}
+
+/* ──────────────────────────────
+   MAIN INIT
+   ────────────────────────────── */
+async function init() {
+  const t0 = Date.now();
+
+  // 1. Daylight (instant — no fetch)
+  const sun = calcSun(C.lat, C.lon, new Date());
+  if (sun) {
+    document.getElementById('light-out').innerHTML =
+      '<div style="display:flex;justify-content:space-between;gap:8px">' +
+        '<div>' +
+          '<div class="big" style="font-size:20px;color:var(--ink)">' + sun.firstLight + '</div>' +
+          '<div class="xs">First light</div>' +
+        '</div>' +
+        '<div style="text-align:right">' +
+          '<div class="big" style="font-size:20px;color:var(--ink)">' + sun.lastLight + '</div>' +
+          '<div class="xs">Last light</div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="margin-top:6px;border-top:1px solid var(--border-l);padding-top:5px">' +
+        '<div class="xs">Sunrise ' + sun.sunrise + ' · Sunset ' + sun.sunset + '</div>' +
+      '</div>';
+  }
+
+  // 2. Buoy data — parallel fetches
+  let buoy = null, spec = null, spectral = null;
+  let temp = null, tempHist = null;
+  let tide1 = null, tide2 = null;
+  let wind = null;
+
+  const results = await Promise.allSettled([
+    fetchBuoy().then(d => buoy = d),
+    fetchSpec().then(d => spec = d),
+    fetchSpectral().then(d => spectral = d),
+    fetchTemp().then(d => temp = d),
+    fetchTempHist().then(d => tempHist = d),
+    fetchTide(C.tide1).then(d => tide1 = d),
+    fetchTide(C.tide2).then(d => tide2 = d),
+    fetchWind().then(d => wind = d),
+  ]);
+
+  // Log any failures
+  results.forEach((r, i) => { if (r.status === 'rejected') console.warn('Fetch #' + i + ' failed:', r.reason); });
+
+  // 3. Render current swell
+  const swEl = document.getElementById('swell-out');
+  if (spec) {
+    const dc = dirCls(spec.swDir);
+    let h = '<div class="big ' + dc + '">' + m2ft(spec.swHt) + '<span style="font-size:13px;font-weight:400"> ft</span></div>' +
+      '<div class="med" style="color:' + dirCol(spec.swDir) + '">@ ' + spec.swPer.toFixed(0) + 's ' + d2c(spec.swDir) + ' (' + Math.round(spec.swDir) + '°)</div>';
+    if (spec.wwHt > 0 && !isNaN(spec.wwHt)) {
+      h += '<div style="margin-top:6px"><div class="xs" style="text-transform:uppercase;letter-spacing:1px">Wind Waves</div>' +
+        '<div class="sm" style="font-family:var(--mono);font-size:12px">' + m2ft(spec.wwHt) + 'ft @ ' + spec.wwPer.toFixed(0) + 's ' + d2c(spec.wwDir) + '</div></div>';
+    }
+    swEl.innerHTML = h;
+    document.getElementById('swell-src').innerHTML = 'NDBC 44097 · Updated: ' + ago(spec.ts);
+  } else if (buoy) {
+    swEl.innerHTML = '<div class="big">' + m2ft(buoy.wvht) + '<span style="font-size:13px"> ft</span></div>' +
+      '<div class="med">@ ' + buoy.dpd.toFixed(0) + 's ' + d2c(buoy.mwd) + '</div>';
+    document.getElementById('swell-src').innerHTML = 'NDBC 44097 · Updated: ' + ago(buoy.ts);
+  } else {
+    swEl.innerHTML = '<span class="err">Buoy data unavailable.<br>Serve via HTTP, not file://</span>';
+  }
+
+  // 4. Render compass rose
+  renderCompass(spectral, spec);
+  if (spectral) {
+    document.getElementById('comp-src').textContent = 'NDBC 44097 spectral · ' + spectral.freqs.length + ' freq bins · Updated: ' + (spec ? ago(spec.ts) : '—');
+  }
+
+  // 5. Render water temperature
+  const tEl = document.getElementById('temp-out');
+  let tH = '';
+  if (temp) {
+    tH += '<div class="big teal" style="font-size:22px">' + temp.v + '°F</div>' +
+      '<div class="xs">Montauk · CO-OPS 8510560</div>';
+  }
+  if (buoy && buoy.wtmp > 0 && !isNaN(buoy.wtmp)) {
+    tH += '<div style="margin-top:5px;font-family:var(--mono);font-size:11px;color:var(--ink3)">' + c2f(buoy.wtmp) + '°F <span class="xs">offshore 44097</span></div>';
+  }
+  if (tempHist) {
+    tH += '<div class="xs" style="margin-top:3px">Last year: ' + tempHist + '°F</div>';
+  }
+  if (!tH) tH = '<span class="err">Temp data unavailable</span>';
+  tEl.innerHTML = tH;
+  if (temp) {
+    document.getElementById('temp-src').textContent = 'CO-OPS 8510560 · Updated: ' + ago(temp.t);
+  }
+
+  // 6. Render tides
+  renderTide('tc1', 'th1', tide1);
+  renderTide('tc2', 'th2', tide2);
+  if (tide1 && tide1.preds.length) {
+    document.getElementById('ts1').textContent = 'CO-OPS 8510719 · ' + tide1.preds.length + ' pts · 72-hour predictions';
+  }
+  if (tide2 && tide2.preds.length) {
+    document.getElementById('ts2').textContent = 'CO-OPS 8510560 · ' + tide2.preds.length + ' pts · 72-hour predictions';
+  }
+
+  // 7. Render wind
+  renderWind(wind);
+
+  // 8. Page timestamp
+  const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
+  document.getElementById('pg-ts').textContent = 'All sources loaded in ' + elapsed + 's · ' + new Date().toLocaleTimeString();
+}
+
+// Resize handler
+let rTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(rTimer);
+  rTimer = setTimeout(init, 400);
+});
+
+document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+</body>
+</html>
