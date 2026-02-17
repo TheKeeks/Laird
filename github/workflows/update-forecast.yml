@@ -1,0 +1,39 @@
+```yaml
+name: Update Swell Forecast
+
+on:
+  schedule:
+    # Run every 6 hours, offset 3.5 hours from model cycles (00/06/12/18 UTC)
+    - cron: '30 3,9,15,21 * * *'
+  workflow_dispatch:  # Allows you to run it manually from GitHub
+
+jobs:
+  update-forecast:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install requests xarray cfgrib eccodes
+
+      - name: Run forecast pipeline
+        run: python scripts/fetch_forecast.py
+
+      - name: Commit and push forecast data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/forecast.json
+          git diff --cached --quiet || git commit -m "Update forecast $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push
+```
